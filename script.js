@@ -22,7 +22,7 @@ let gameState = {
 // Baseado na imagem limpa com pontos vermelhos fornecida
 const errorPositions = [
     { id: 1, x: 25, y: 8, description: "Seta vermelha no topo esquerdo" },
-    { id: 2, x: 45, y: 25, description: "Círculo vermelho centro-esquerda superior" },
+    { id: 2, x: 40, y: 25, description: "Círculo vermelho centro-esquerda superior" },
     { id: 3, x: 88, y: 18, description: "Círculo vermelho pequeno topo direita" },
     { id: 4, x: 92, y: 30, description: "Círculo vermelho direita superior" },
     { id: 5, x: 25, y: 65, description: "Círculo vermelho pequeno esquerda-centro" },
