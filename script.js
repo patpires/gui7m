@@ -27,7 +27,7 @@ const errorPositions = [
     { id: 4, x: 92, y: 30, description: "Círculo vermelho direita superior" },
     { id: 5, x: 25, y: 65, description: "Círculo vermelho pequeno esquerda-centro" },
     { id: 6, x: 78, y: 45, description: "Círculo vermelho grande centro-direita" },
-    { id: 7, x: 25, y: 78, description: "Círculo vermelho grande inferior esquerda" }
+    { id: 7, x: 23, y: 78, description: "Círculo vermelho grande inferior esquerda" }
 ];;
 
 // Elementos DOM
