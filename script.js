@@ -18,16 +18,16 @@ let gameState = {
     audioEnabled: false
 };
 
-// Coordenadas dos erros (em porcentagem da imagem) - baseadas nos pontos vermelhos
+// Coordenadas dos erros (em porcentagem da imagem) - baseadas n// Posições dos 7 erros na imagem (coordenadas em porcentagem)
 const errorPositions = [
-    { id: 1, x: 20, y: 15, description: "Seta vermelha no canto superior esquerdo" },
-    { id: 2, x: 45, y: 25, description: "Círculo vermelho nas uvas da área central superior" },
-    { id: 3, x: 75, y: 20, description: "Círculo vermelho no nariz do coelho laranja" },
-    { id: 4, x: 85, y: 35, description: "Círculo vermelho no coelho branco da direita" },
-    { id: 5, x: 65, y: 45, description: "Círculo vermelho grande no patinho amarelo" },
-    { id: 6, x: 25, y: 55, description: "Círculo vermelho na cesta de frutas" },
-    { id: 7, x: 40, y: 70, description: "Círculo vermelho grande na área inferior central" }
-];
+    { id: 1, x: 12, y: 35, description: "Coelho azul à esquerda" },
+    { id: 2, x: 45, y: 15, description: "Área das uvas/frutas no topo" },
+    { id: 3, x: 75, y: 20, description: "Coelho laranja à direita" },
+    { id: 4, x: 55, y: 40, description: "Área central próxima ao bebê" },
+    { id: 5, x: 25, y: 50, description: "Cesta de frutas à esquerda" },
+    { id: 6, x: 75, y: 55, description: "Patinho amarelo à direita" },
+    { id: 7, x: 45, y: 75, description: "Área inferior central" }
+];;
 
 // Elementos DOM
 let elements = {};
@@ -372,13 +372,22 @@ function endGame(victory, showAnswerRequested = false) {
         }
     });
     
-    // Configurar modal de fim de jogo
+    // Configurar modal de fim de jogo baseado no resultado
     const successMessage = document.getElementById('success-message');
     const timeoutMessage = document.getElementById('timeout-message');
     
     if (victory) {
+        // Configurar mensagem de vitória
         successMessage.style.display = 'block';
         timeoutMessage.style.display = 'none';
+        
+        // Atualizar título do modal para vitória
+        const modalTitle = elements.gameEndModal.querySelector('h2');
+        if (modalTitle) {
+            modalTitle.textContent = '🎉 Parabéns!';
+            modalTitle.style.color = '#4CAF50';
+        }
+        
         playSound('victory');
         
         // Efeito de celebração
@@ -386,8 +395,18 @@ function endGame(victory, showAnswerRequested = false) {
             createConfetti();
         }, 500);
     } else {
+        // Configurar mensagem de derrota
         successMessage.style.display = 'none';
         timeoutMessage.style.display = 'block';
+        
+        // Atualizar título do modal para derrota
+        const modalTitle = elements.gameEndModal.querySelector('h2');
+        if (modalTitle) {
+            modalTitle.textContent = '😔 Que pena!';
+            modalTitle.style.color = '#F44336';
+        }
+        
+        playSound('defeat');
     }
     
     // Mostrar modal após um breve delay
@@ -395,7 +414,7 @@ function endGame(victory, showAnswerRequested = false) {
         showModal(elements.gameEndModal);
         announceToScreenReader(victory ? 
             'Parabéns! Você encontrou todos os 7 erros!' : 
-            'Fim de jogo. Veja onde estavam os erros.'
+            'Fim de jogo. Você esgotou suas tentativas. Veja onde estavam os erros.'
         );
     }, showAnswerRequested ? 0 : 1500);
 }
