@@ -2,7 +2,7 @@
 const GAME_CONFIG = {
     totalErrors: 7,
     maxWrongAttempts: 10,
-    errorRadius: 30, // Raio da área clicável em pixels
+    errorRadius: 50, // Raio da área clicável em pixels (aumentado para facilitar)
     hintCooldown: 10000, // 10 segundos entre dicas
     celebrationDuration: 2000
 };
@@ -18,15 +18,15 @@ let gameState = {
     audioEnabled: false
 };
 
-// Coordenadas dos erros (em porcentagem da imagem)
+// Coordenadas dos erros (em porcentagem da imagem) - baseadas nos pontos vermelhos
 const errorPositions = [
-    { id: 1, x: 15, y: 25, description: "Coelho verde no canto superior esquerdo" },
-    { id: 2, x: 45, y: 20, description: "Ursinho marrom na área superior central" },
-    { id: 3, x: 75, y: 25, description: "Nariz do coelho laranja no lado direito" },
-    { id: 4, x: 85, y: 65, description: "Coelho branco no lado direito inferior" },
-    { id: 5, x: 65, y: 45, description: "Patinho amarelo no centro-direita" },
-    { id: 6, x: 25, y: 55, description: "Cesta de frutas no centro-esquerda" },
-    { id: 7, x: 40, y: 75, description: "Laranja na parte inferior" }
+    { id: 1, x: 20, y: 15, description: "Seta vermelha no canto superior esquerdo" },
+    { id: 2, x: 45, y: 25, description: "Círculo vermelho nas uvas da área central superior" },
+    { id: 3, x: 75, y: 20, description: "Círculo vermelho no nariz do coelho laranja" },
+    { id: 4, x: 85, y: 35, description: "Círculo vermelho no coelho branco da direita" },
+    { id: 5, x: 65, y: 45, description: "Círculo vermelho grande no patinho amarelo" },
+    { id: 6, x: 25, y: 55, description: "Círculo vermelho na cesta de frutas" },
+    { id: 7, x: 40, y: 70, description: "Círculo vermelho grande na área inferior central" }
 ];
 
 // Elementos DOM
@@ -48,7 +48,6 @@ function initializeElements() {
         wrongAttemptsSpan: document.getElementById('wrong-attempts'),
         resetBtn: document.getElementById('reset-btn'),
         hintBtn: document.getElementById('hint-btn'),
-        showAnswerBtn: document.getElementById('show-answer-btn'),
         audioToggle: document.getElementById('audio-toggle'),
         backgroundMusic: document.getElementById('background-music'),
         infoBtn: document.getElementById('info-btn'),
@@ -69,7 +68,6 @@ function setupEventListeners() {
     // Botões de controle
     elements.resetBtn.addEventListener('click', resetGame);
     elements.hintBtn.addEventListener('click', showHint);
-    elements.showAnswerBtn.addEventListener('click', showAnswer);
     elements.audioToggle.addEventListener('click', toggleAudio);
     
     // Modais
@@ -120,15 +118,32 @@ function handleImageClick(event) {
     if (gameState.gameEnded) return;
     
     const rect = elements.interactiveImage.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 100;
-    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+    
+    // Verificar se o clique está dentro da imagem
+    if (clickX < 0 || clickY < 0 || clickX > rect.width || clickY > rect.height) {
+        return; // Clique fora da imagem
+    }
+    
+    const x = (clickX / rect.width) * 100;
+    const y = (clickY / rect.height) * 100;
+    
+    // Debug: mostrar coordenadas clicadas
+    console.log(`Clique em: x=${x.toFixed(1)}%, y=${y.toFixed(1)}%`);
+    console.log(`Dimensões da imagem: ${rect.width}x${rect.height}`);
+    console.log(`Posição do clique: ${clickX}, ${clickY}`);
     
     const clickedError = findErrorAtPosition(x, y);
     
+    if (clickedError) {
+        console.log(`Erro encontrado: ${clickedError.id} - ${clickedError.description}`);
+    }
+    
     if (clickedError && !gameState.foundErrors.has(clickedError.id)) {
-        handleCorrectClick(clickedError, event.clientX - rect.left, event.clientY - rect.top);
+        handleCorrectClick(clickedError, clickX, clickY);
     } else {
-        handleWrongClick(event.clientX - rect.left, event.clientY - rect.top);
+        handleWrongClick(clickX, clickY);
     }
 }
 
@@ -145,22 +160,47 @@ function handleCorrectClick(error, clickX, clickY) {
     gameState.errorsFound++;
     gameState.foundErrors.add(error.id);
     
+    // Efeitos visuais para acerto
+    createRippleEffect(clickX, clickY);
+    createSparkleParticles(clickX, clickY);
+    
     // Adicionar marcador visual
     addErrorMarker(error, clickX, clickY);
     
-    // Feedback positivo
-    showFeedback(`🎉 Erro ${gameState.errorsFound}/7 encontrado!`, 'success');
+    // Feedback positivo melhorado
+    const messages = [
+        `🎉 Excelente! Erro ${gameState.errorsFound}/7 encontrado!`,
+        `⭐ Muito bem! Mais um erro descoberto!`,
+        `🌟 Parabéns! Você está indo muito bem!`,
+        `🎯 Perfeito! Continue assim!`,
+        `✨ Fantástico! Erro encontrado!`
+    ];
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    showFeedback(randomMessage, 'success');
+    
+    // Efeito sonoro
     playSound('success');
     
-    // Animação de celebração
+    // Animação de celebração na imagem
     elements.interactiveContainer.classList.add('celebrate');
     setTimeout(() => elements.interactiveContainer.classList.remove('celebrate'), 600);
+    
+    // Efeito de progresso visual
+    updateProgressIndicator();
+    
+    // Vibração em dispositivos móveis (se suportado)
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]);
+    }
     
     updateDisplay();
     
     // Verificar vitória
     if (gameState.errorsFound === GAME_CONFIG.totalErrors) {
-        setTimeout(() => endGame(true), 1000);
+        setTimeout(() => {
+            createVictoryFireworks();
+            endGame(true);
+        }, 1000);
     }
     
     // Anunciar para leitores de tela
@@ -170,18 +210,42 @@ function handleCorrectClick(error, clickX, clickY) {
 function handleWrongClick(clickX, clickY) {
     gameState.wrongAttempts++;
     
-    // Feedback negativo
-    showFeedback('❌ Tente novamente!', 'error');
+    // Efeitos visuais para erro
+    createErrorEffect(clickX, clickY);
+    
+    // Feedback negativo melhorado
+    const errorMessages = [
+        '❌ Ops! Tente novamente!',
+        '🔍 Quase lá! Continue procurando!',
+        '💪 Não desista! Você consegue!',
+        '🎯 Foque bem e tente de novo!',
+        '🔎 Olhe com mais atenção!'
+    ];
+    const randomMessage = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+    showFeedback(randomMessage, 'error');
+    
+    // Efeito sonoro
     playSound('error');
     
-    // Efeito visual de erro
-    showWrongClickEffect(clickX, clickY);
+    // Efeito de vibração para erro (mais sutil)
+    if (navigator.vibrate) {
+        navigator.vibrate(200);
+    }
+    
+    // Animação de shake na imagem
+    elements.interactiveImage.style.animation = 'errorShake 0.6s ease-in-out';
+    setTimeout(() => {
+        elements.interactiveImage.style.animation = '';
+    }, 600);
     
     updateDisplay();
     
     // Verificar limite de tentativas
     if (gameState.wrongAttempts >= GAME_CONFIG.maxWrongAttempts) {
         setTimeout(() => endGame(false), 1000);
+    } else if (gameState.wrongAttempts >= GAME_CONFIG.maxWrongAttempts - 2) {
+        // Aviso quando restam poucas tentativas
+        showStatusMessage(`⚠️ Cuidado! Restam apenas ${GAME_CONFIG.maxWrongAttempts - gameState.wrongAttempts} tentativas!`);
     }
     
     // Anunciar para leitores de tela
@@ -293,10 +357,6 @@ function showHintMarker(error) {
     
     elements.interactiveContainer.appendChild(hint);
     setTimeout(() => hint.remove(), 2000);
-}
-
-function showAnswer() {
-    endGame(false, true);
 }
 
 function endGame(victory, showAnswerRequested = false) {
@@ -644,5 +704,194 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+
+
+// Funções para efeitos visuais aprimorados
+
+function createRippleEffect(x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple-effect';
+    ripple.style.left = `${x - 25}px`;
+    ripple.style.top = `${y - 25}px`;
+    ripple.style.width = '50px';
+    ripple.style.height = '50px';
+    
+    elements.interactiveContainer.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 1000);
+}
+
+function createSparkleParticles(centerX, centerY) {
+    const colors = ['#FFD700', '#FF8C42', '#8FBC8F', '#FF6B6B', '#9B59B6'];
+    const particleCount = 8;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'sparkle-particle';
+        
+        const angle = (360 / particleCount) * i;
+        const distance = 30 + Math.random() * 20;
+        const x = centerX + Math.cos(angle * Math.PI / 180) * distance;
+        const y = centerY + Math.sin(angle * Math.PI / 180) * distance;
+        
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.animationDelay = `${i * 0.1}s`;
+        
+        elements.interactiveContainer.appendChild(particle);
+        setTimeout(() => particle.remove(), 1500);
+    }
+}
+
+function createErrorEffect(x, y) {
+    const errorEffect = document.createElement('div');
+    errorEffect.className = 'error-effect';
+    errorEffect.style.left = `${x - 20}px`;
+    errorEffect.style.top = `${y - 20}px`;
+    
+    elements.interactiveContainer.appendChild(errorEffect);
+    setTimeout(() => errorEffect.remove(), 800);
+}
+
+function createVictoryFireworks() {
+    const fireworksContainer = document.createElement('div');
+    fireworksContainer.className = 'victory-celebration';
+    document.body.appendChild(fireworksContainer);
+    
+    const colors = ['#FFD700', '#FF8C42', '#8FBC8F', '#FF6B6B', '#9B59B6', '#00BCD4'];
+    const fireworkCount = 20;
+    
+    for (let i = 0; i < fireworkCount; i++) {
+        setTimeout(() => {
+            const firework = document.createElement('div');
+            firework.className = 'victory-firework';
+            firework.style.left = `${Math.random() * 100}%`;
+            firework.style.top = `${Math.random() * 100}%`;
+            firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+            firework.style.animationDelay = `${Math.random() * 0.5}s`;
+            
+            fireworksContainer.appendChild(firework);
+            setTimeout(() => firework.remove(), 2000);
+        }, i * 100);
+    }
+    
+    setTimeout(() => fireworksContainer.remove(), 3000);
+}
+
+function updateProgressIndicator() {
+    let progressBar = document.querySelector('.progress-indicator');
+    if (!progressBar) {
+        progressBar = document.createElement('div');
+        progressBar.className = 'progress-indicator';
+        elements.gameStatus.appendChild(progressBar);
+    }
+    
+    const progressPercentage = (gameState.errorsFound / GAME_CONFIG.totalErrors) * 100;
+    progressBar.style.width = `${progressPercentage}%`;
+}
+
+function showStatusMessage(message) {
+    let statusMsg = document.querySelector('.status-message');
+    if (!statusMsg) {
+        statusMsg = document.createElement('div');
+        statusMsg.className = 'status-message';
+        document.body.appendChild(statusMsg);
+    }
+    
+    statusMsg.textContent = message;
+    statusMsg.style.display = 'block';
+    
+    setTimeout(() => {
+        statusMsg.style.display = 'none';
+    }, 3000);
+}
+
+function showHintEffect(error) {
+    const rect = elements.interactiveImage.getBoundingClientRect();
+    const x = (error.x / 100) * elements.interactiveImage.offsetWidth;
+    const y = (error.y / 100) * elements.interactiveImage.offsetHeight;
+    
+    const hintEffect = document.createElement('div');
+    hintEffect.className = 'click-hint';
+    hintEffect.style.left = `${x - 30}px`;
+    hintEffect.style.top = `${y - 30}px`;
+    hintEffect.style.width = '60px';
+    hintEffect.style.height = '60px';
+    
+    elements.interactiveContainer.appendChild(hintEffect);
+    setTimeout(() => hintEffect.remove(), 3000);
+}
+
+// Atualizar função showHint para usar o novo efeito visual
+function showHint() {
+    const now = Date.now();
+    if (now - gameState.lastHintTime < GAME_CONFIG.hintCooldown) {
+        const remainingTime = Math.ceil((GAME_CONFIG.hintCooldown - (now - gameState.lastHintTime)) / 1000);
+        showFeedback(`💡 Próxima dica em ${remainingTime}s`, 'hint');
+        return;
+    }
+    
+    const unfoundErrors = errorPositions.filter(error => !gameState.foundErrors.has(error.id));
+    if (unfoundErrors.length === 0) return;
+    
+    const randomError = unfoundErrors[Math.floor(Math.random() * unfoundErrors.length)];
+    
+    // Mostrar dica visual temporária melhorada
+    showHintEffect(randomError);
+    
+    gameState.hintsUsed++;
+    gameState.lastHintTime = now;
+    
+    const hintMessages = [
+        `💡 Dica: ${randomError.description}`,
+        `🔍 Procure por: ${randomError.description}`,
+        `👀 Observe: ${randomError.description}`,
+        `🎯 Foque em: ${randomError.description}`
+    ];
+    const randomHintMessage = hintMessages[Math.floor(Math.random() * hintMessages.length)];
+    
+    showFeedback(randomHintMessage, 'hint');
+    announceToScreenReader(`Dica: procure por ${randomError.description}`);
+}
+
+// Melhorar função showFeedback
+function showFeedback(message, type = 'info') {
+    elements.feedback.textContent = message;
+    elements.feedback.className = `feedback ${type}`;
+    elements.feedback.style.display = 'block';
+    
+    // Duração baseada no tipo
+    const duration = type === 'success' ? 3000 : type === 'error' ? 2500 : 2000;
+    
+    setTimeout(() => {
+        elements.feedback.style.display = 'none';
+    }, duration);
+}
+
+// Melhorar função updateDisplay
+function updateDisplay() {
+    elements.errorsFoundSpan.textContent = gameState.errorsFound;
+    elements.wrongAttemptsSpan.textContent = gameState.wrongAttempts;
+    
+    // Atualizar cores baseadas no progresso
+    const progressPercentage = (gameState.errorsFound / GAME_CONFIG.totalErrors) * 100;
+    elements.gameStatus.style.background = `linear-gradient(90deg, 
+        var(--soft-mint) 0%, 
+        var(--soft-peach) ${progressPercentage}%, 
+        var(--text-light) ${progressPercentage}%)`;
+    
+    // Adicionar classe de destaque quando próximo do limite
+    if (gameState.wrongAttempts >= GAME_CONFIG.maxWrongAttempts - 3) {
+        elements.wrongAttemptsSpan.style.color = 'var(--primary-red)';
+        elements.wrongAttemptsSpan.style.fontWeight = 'bold';
+    } else {
+        elements.wrongAttemptsSpan.style.color = '';
+        elements.wrongAttemptsSpan.style.fontWeight = '';
+    }
+    
+    // Atualizar indicador de progresso
+    updateProgressIndicator();
 }
 
