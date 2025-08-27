@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jogo dos 7 Erros comemorativo aos 7 meses do GUI - Tema Introdução Alimentar">
+    <title>Jogo dos 7 Erros - GUI 7 Meses 🍎</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header com título e controles -->
+    <header class="game-header" role="banner">
+        <h1 class="game-title">
+            🎉 Jogo dos 7 Erros - GUI 7 Meses 🍎
+        </h1>
+        <p class="game-subtitle">Comemorando a introdução alimentar do nosso pequeno explorador!</p>
+        
+        <!-- Controles de áudio e informações -->
+        <div class="header-controls">
+            <button id="audio-toggle" class="audio-btn" aria-label="Ativar ou desativar música de fundo">
+                🔊 Música
+            </button>
+            <button id="info-btn" class="info-btn" aria-label="Informações sobre o GUI">
+                ℹ️ Sobre o GUI
+            </button>
+        </div>
+    </header>
+
+    <!-- Área principal do jogo -->
+    <main class="game-container" role="main">
+        <!-- Painel de status do jogo -->
+        <section class="game-status" aria-live="polite">
+            <div class="status-item">
+                <span class="status-label">Erros encontrados:</span>
+                <span id="errors-found" class="status-value">0</span>
+                <span class="status-total">/ 7</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Tentativas erradas:</span>
+                <span id="wrong-attempts" class="status-value">0</span>
+                <span class="status-total">/ 10</span>
+            </div>
+        </section>
+
+        <!-- Instruções do jogo -->
+        <section class="game-instructions">
+            <p>Encontre as 7 diferenças entre as duas imagens clicando na imagem da direita! 🔍</p>
+        </section>
+
+        <!-- Área das imagens do jogo -->
+        <section class="images-container" role="img" aria-label="Área do jogo dos 7 erros">
+            <div class="image-wrapper">
+                <h2 class="image-title">Imagem Original</h2>
+                <img 
+                    src="gui7meses-jogodos7erros-ImagemdaEsquerda.png" 
+                    alt="Imagem original do bebê GUI com frutas e brinquedos para introdução alimentar"
+                    class="game-image original-image"
+                    id="original-image"
+                >
+            </div>
+            
+            <div class="image-wrapper interactive">
+                <h2 class="image-title">Encontre os Erros</h2>
+                <div class="interactive-image-container">
+                    <img 
+                        src="gui7meses-jogodos7erros-ImagemdaDireita.png" 
+                        alt="Imagem interativa para encontrar os 7 erros - clique nas diferenças"
+                        class="game-image interactive-image"
+                        id="interactive-image"
+                    >
+                    <!-- Marcadores dos erros encontrados serão adicionados aqui via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Botões de ação -->
+        <section class="game-actions">
+            <button id="reset-btn" class="action-btn reset-btn">
+                🔄 Reiniciar Jogo
+            </button>
+            <button id="hint-btn" class="action-btn hint-btn">
+                💡 Dica
+            </button>
+            <button id="show-answer-btn" class="action-btn answer-btn">
+                👁️ Ver Gabarito
+            </button>
+        </section>
+    </main>
+
+    <!-- Modal de informações sobre o GUI -->
+    <div id="info-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="modal-title">Sobre o GUI - 7 Meses! 👶</h2>
+                <button id="close-modal" class="close-btn" aria-label="Fechar modal">×</button>
+            </header>
+            <div class="modal-body">
+                <p>🎂 <strong>Parabéns, GUI!</strong> Hoje você completa 7 meses de vida!</p>
+                <p>🍎 Este jogo celebra sua jornada na <strong>introdução alimentar</strong>, descobrindo novos sabores e texturas.</p>
+                <p>🧸 Rodeado de frutas coloridas e seus brinquedos favoritos, você está crescendo e explorando o mundo com curiosidade.</p>
+                <p>💕 Que este seja apenas o começo de muitas aventuras deliciosas e descobertas incríveis!</p>
+                <div class="celebration-emojis">
+                    🎉 🍌 🍊 🍎 🥑 🍇 🎈 ✨
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de fim de jogo -->
+    <div id="game-end-modal" class="modal" role="dialog" aria-labelledby="end-modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="end-modal-title">🎉 Parabéns!</h2>
+                <button id="close-end-modal" class="close-btn" aria-label="Fechar modal">×</button>
+            </header>
+            <div class="modal-body">
+                <div id="success-message" class="success-content">
+                    <p>🌟 Você encontrou todos os 7 erros!</p>
+                    <p>Assim como o GUI descobrindo novos sabores, você explorou cada detalhe com atenção!</p>
+                </div>
+                <div id="timeout-message" class="timeout-content" style="display: none;">
+                    <p>⏰ Que tal ver onde estavam os erros?</p>
+                    <p>Não desista! Assim como o GUI aprendendo a comer, a prática leva à perfeição!</p>
+                </div>
+                <div class="gabarito-container">
+                    <h3>Gabarito dos Erros:</h3>
+                    <img 
+                        src="gui7meses-jogodos7erros(gabarito).png" 
+                        alt="Gabarito mostrando a localização dos 7 erros marcados com X vermelho"
+                        class="gabarito-image"
+                        id="gabarito-image"
+                    >
+                </div>
+                <button id="play-again-btn" class="action-btn">
+                    🎮 Jogar Novamente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback visual para acertos/erros -->
+    <div id="feedback" class="feedback" aria-live="assertive"></div>
+
+    <!-- Áudio de fundo -->
+    <audio id="background-music" loop preload="auto">
+        <source src="background-music.wav" type="audio/wav">
+        Seu navegador não suporta áudio HTML5.
+    </audio>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
+
