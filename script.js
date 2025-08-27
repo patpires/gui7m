@@ -22,11 +22,11 @@ let gameState = {
 const errorPositions = [
     { id: 1, x: 12, y: 35, description: "Coelho azul à esquerda" },
     { id: 2, x: 45, y: 15, description: "Área das uvas/frutas no topo" },
-    { id: 3, x: 75, y: 20, description: "Coelho laranja à direita" },
+    { id: 3, x: 85, y: 25, description: "Canto superior direito" },
     { id: 4, x: 55, y: 40, description: "Área central próxima ao bebê" },
     { id: 5, x: 25, y: 50, description: "Cesta de frutas à esquerda" },
-    { id: 6, x: 75, y: 55, description: "Patinho amarelo à direita" },
-    { id: 7, x: 45, y: 75, description: "Área inferior central" }
+    { id: 6, x: 70, y: 50, description: "Patinho amarelo" },
+    { id: 7, x: 40, y: 80, description: "Área inferior central" }
 ];;
 
 // Elementos DOM
