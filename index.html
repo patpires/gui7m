@@ -20,6 +20,9 @@
             <button id="audio-toggle" class="audio-btn" aria-label="Ativar ou desativar música de fundo">
                 🔊 Música
             </button>
+            <button id="info-btn" class="info-btn" aria-label="Informações sobre o GUI">
+                ℹ️ Sobre o GUI
+            </button>
         </div>
     </header>
 
@@ -75,7 +78,9 @@
             <button id="reset-btn" class="action-btn reset-btn">
                 🔄 Reiniciar Jogo
             </button>
-            
+            <button id="hint-btn" class="action-btn hint-btn">
+                💡 Dica
+            </button>
         </section>
     </main>
 
@@ -107,13 +112,8 @@
             </header>
             <div class="modal-body">
                 <div id="success-message" class="success-content">
-                    <p>🌟 Uhurrrrr, você encontrou todos os 7 erros!!! </p>
-                     <p>Assim como o GUI descobrindo novos sabores, você explorou cada detalhe com atenção!</p>
-                    <p>🎂 <strong>Parabéns pra GUI, que </strong> hoje completa 7 meses de vida!</p>
-                <p>🍎 Gui, este jogo celebra sua jornada na <strong>introdução alimentar</strong>, descobrindo novos sabores e texturas.</p>
-                <p>🧸 Rodeado de frutas coloridas e seus brinquedos favoritos, você está crescendo e explorando o mundo com curiosidade.</p>
-                <p>💕 Que este seja apenas o começo de muitas aventuras deliciosas e descobertas incríveis!</p>
-                   
+                    <p>🌟 Você encontrou todos os 7 erros!</p>
+                    <p>Assim como o GUI descobrindo novos sabores, você explorou cada detalhe com atenção!</p>
                 </div>
                 <div id="timeout-message" class="timeout-content" style="display: none;">
                     <p>😔 Você esgotou suas tentativas, mas não desista!</p>
@@ -143,12 +143,13 @@
     <div class="status-message" aria-live="polite"></div>
 
     <!-- Áudio de fundo -->
-    <audio id="background-music" loop>
-          <source src="background-music.mp3" type="audio/mpeg">
-      
+    <audio id="background-music" loop preload="auto">
+        <source src="background-music.wav" type="audio/wav">
+        Seu navegador não suporta áudio HTML5.
     </audio>
 
     <!-- Scripts -->
     <script src="script.js"></script>
 </body>
 </html>
+
