@@ -914,4 +914,3 @@ function updateDisplay() {
     // Atualizar indicador de progresso
     updateProgressIndicator();
 }
-
