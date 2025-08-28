@@ -47,7 +47,7 @@ function initializeElements() {
         interactiveContainer: document.querySelector('.interactive-image-container'),
         errorsFoundSpan: document.getElementById('errors-found'),
         wrongAttemptsSpan: document.getElementById('wrong-attempts'),
-        Btn: document.getElementById('-btn'),
+        resetBtn: document.getElementById('reset-btn'),
         hintBtn: document.getElementById('hint-btn'),
         audioToggle: document.getElementById('audio-toggle'),
         backgroundMusic: document.getElementById('background-music'),
@@ -75,13 +75,10 @@ function setupEventListeners() {
     elements.infoBtn.addEventListener('click', () => showModal(elements.infoModal));
     elements.closeModal.addEventListener('click', () => hideModal(elements.infoModal));
     elements.closeEndModal.addEventListener('click', () => hideModal(elements.gameEndModal));
-    // Dentro da sua função setupEventListeners()
-elements.playAgainBtn.addEventListener('click', () => {
-    console.log("Botão 'Jogar Novamente' clicado!"); // LOG 3: Confirma que o clique foi registrado
-
-    hideModal(elements.gameEndModal);
-    resetGame();
-});
+    elements.playAgainBtn.addEventListener('click', () => {
+        hideModal(elements.gameEndModal);
+        resetGame();
+    });
     
     // Fechar modais clicando fora
     elements.infoModal.addEventListener('click', (e) => {
@@ -119,18 +116,7 @@ function setupErrorDetection() {
 }
 
 function handleImageClick(event) {
-
-console.log("Clique na imagem. O jogo terminou? Resposta:", gameState.gameEnded); // LOG 4: A verificação final
-
-    // Se o jogo terminou, não faça nada
-    if (gameState.gameEnded) {
-        console.log("Ação de clique ignorada porque o jogo já terminou.");
-        return;
-    }
-
-    
-    
-    
+    if (gameState.gameEnded) return;
     
     const rect = elements.interactiveImage.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
@@ -435,37 +421,22 @@ function endGame(victory, showAnswerRequested = false) {
 }
 
 function resetGame() {
-    console.log("Função resetGame() chamada."); // LOG 1: Confirma que a função foi chamada
-
-    // 1. Redefinir o estado do jogo
     gameState = {
         errorsFound: 0,
         wrongAttempts: 0,
-        gameEnded: false, // <-- PONTO MAIS CRÍTICO!
+        gameEnded: false,
         hintsUsed: 0,
         lastHintTime: 0,
         foundErrors: new Set(),
-        audioEnabled: gameState.audioEnabled // Mantém a preferência de áudio do usuário
+        audioEnabled: gameState.audioEnabled
     };
     
-    // 2. Remover todos os marcadores visuais do jogo anterior
+    // Remover marcadores existentes
     document.querySelectorAll('.error-marker, .hint-marker, .wrong-click-effect').forEach(el => el.remove());
     
-    // 3. Garantir que a imagem seja clicável novamente
-    // Pode haver um estilo CSS que desativa cliques no fim do jogo
-    elements.interactiveImage.style.pointerEvents = 'auto';
-    elements.interactiveContainer.classList.remove('game-over-overlay'); // Se você usa uma classe de overlay
-    
-    // 4. Atualizar a interface do usuário para os valores iniciais
     updateDisplay();
-    
-    // 5. Anunciar para leitores de tela que o jogo recomeçou
     announceToScreenReader('Jogo reiniciado. Encontre os 7 erros na imagem da direita.');
-
-    console.log("Estado do jogo após o reset:", gameState); // LOG 2: Verifica se gameEnded é false
 }
-    
-    
 
 function updateDisplay() {
     elements.errorsFoundSpan.textContent = gameState.errorsFound;
