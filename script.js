@@ -465,12 +465,7 @@ function resetGame() {
     console.log("Estado do jogo após o reset:", gameState); // LOG 2: Verifica se gameEnded é false
 }
     
-    // Remover marcadores existentes
-    document.querySelectorAll('.error-marker, .hint-marker, .wrong-click-effect').forEach(el => el.remove());
     
-    updateDisplay();
-    announceToScreenReader('Jogo reiniciado. Encontre os 7 erros na imagem da direita.');
-}
 
 function updateDisplay() {
     elements.errorsFoundSpan.textContent = gameState.errorsFound;
