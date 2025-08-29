@@ -21,13 +21,13 @@ let gameState = {
 // Coordenadas dos erros (em porcentagem da imagem) - baseadas n// Posições dos 7 erros na imagem (coordenadas em porcentagem)
 // Baseado na imagem limpa com pontos vermelhos fornecida
 const errorPositions = [
-    { id: 1, x: 25, y: 8, description: "Seta vermelha no topo esquerdo" },
-    { id: 2, x: 45, y: 25, description: "Círculo vermelho centro-esquerda superior" },
-    { id: 3, x: 88, y: 18, description: "Círculo vermelho pequeno topo direita" },
-    { id: 4, x: 92, y: 30, description: "Círculo vermelho direita superior" },
-    { id: 5, x: 20, y: 60, description: "Círculo vermelho pequeno esquerda-centro" },
-    { id: 6, x: 78, y: 45, description: "Círculo vermelho grande centro-direita" },
-    { id: 7, x: 25, y: 75, description: "Círculo vermelho grande inferior esquerda" }
+    { id: 1, x: 25, y: 8, description: "topo esquerdo" },
+    { id: 2, x: 45, y: 25, description: "centro mais a esquerda superior" },
+    { id: 3, x: 88, y: 18, description: "pequeno topo na direita" },
+    { id: 4, x: 92, y: 30, description: "direita e superior" },
+    { id: 5, x: 20, y: 60, description: "discreto centro para esquerda" },
+    { id: 6, x: 78, y: 45, description: "centro para a direita" },
+    { id: 7, x: 25, y: 75, description: "discreto inferior  a esquerda" }
 ];;
 
 // Elementos DOM
