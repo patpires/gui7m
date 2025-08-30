@@ -21,9 +21,9 @@ let gameState = {
 // Coordenadas dos erros (em porcentagem da imagem) - baseadas n// Posições dos 7 erros na imagem (coordenadas em porcentagem)
 // Baseado na imagem limpa com pontos vermelhos fornecida
 const errorPositions = [
-    { id: 1, x: 20, y: 8, description: "olhe minhas folhas!" },
-    { id: 2, x: 40, y: 30, description: "tenho olhos!" },
-    { id: 3, x: 82, y: 18, description: "gosto de cheirar!" },
+    { id: 1, x: 22, y: 8, description: "olhe minhas folhas!" },
+    { id: 2, x: 38, y: 30, description: "tenho olhos!" },
+    { id: 3, x: 80, y: 19, description: "gosto de cheirar!" },
     { id: 4, x: 95, y: 34, description: "sou pequeniniho..." },
     { id: 5, x: 26, y: 64, description: "olhe a cesta!" },
     { id: 6, x: 78, y: 51, description: "gosto de assobiar" },
