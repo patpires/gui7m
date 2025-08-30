@@ -3,7 +3,7 @@ const GAME_CONFIG = {
     totalErrors: 7,
     maxWrongAttempts: 10,
     errorRadius: 50, // Raio da área clicável em pixels (aumentado para facilitar)
-    hintCooldown: 10000, // 10 segundos entre dicas
+    hintCooldown: 20000, // 20 segundos entre dicas
     celebrationDuration: 2000
 };
 
@@ -21,13 +21,14 @@ let gameState = {
 // Coordenadas dos erros (em porcentagem da imagem) - baseadas n// Posições dos 7 erros na imagem (coordenadas em porcentagem)
 // Baseado na imagem limpa com pontos vermelhos fornecida
 const errorPositions = [
-    { id: 1, x: 25, y: 8, description: "topo esquerdo" },
-    { id: 2, x: 45, y: 25, description: "centro mais a esquerda superior" },
-    { id: 3, x: 88, y: 18, description: "pequeno topo na direita" },
-    { id: 4, x: 92, y: 30, description: "direita e superior" },
-    { id: 5, x: 20, y: 60, description: "discreto centro para esquerda" },
-    { id: 6, x: 78, y: 45, description: "centro para a direita" },
-    { id: 7, x: 25, y: 75, description: "discreto inferior  a esquerda" }
+    { id: 1, x: 20, y: 8, description: "olhe minhas folhas!" },
+    { id: 2, x: 40, y: 30, description: "tenho olhos!" },
+    { id: 3, x: 82, y: 18, description: "gosto de cheirar!" },
+    { id: 4, x: 95, y: 34, description: "sou pequeniniho..." },
+    { id: 5, x: 26, y: 64, description: "olhe a cesta!" },
+    { id: 6, x: 78, y: 51, description: "gosto de assobiar" },
+    { id: 7, x: 24, y: 85, description: "sou amarela" }
+
 ];;
 
 // Elementos DOM
